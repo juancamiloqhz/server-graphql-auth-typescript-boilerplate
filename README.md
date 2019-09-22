@@ -5,12 +5,15 @@
 - [GraphQl](https://graphql.org)
 - Typescript
 - TypeORM
+- TypeGraphQL
 - Apollo Server Express
 - PostgreSQL
-- JSON Web Tokens
-- GraphQL code generator
 
 ### With the following features
 
-- JWT Authentication
-- Post
+- Setup a GraphQL server using TypeGraphQL and TypeORM
+- Register a user
+- Login and create access and refresh tokens
+- Authenticated mutation/queries
+- Refresh the token
+- Revoke token for a user
