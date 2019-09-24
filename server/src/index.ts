@@ -1,21 +1,35 @@
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import {User} from "./entity/User";
+import "dotenv/config";
+import express, { Response } from "express";
+import { ApolloServer } from "apollo-server-express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { buildSchema } from "type-graphql";
+import { UserResolver } from "./resolvers";
+import { createConnections } from "typeorm";
+// import { User } from "./entity/User";
 
-createConnection().then(async connection => {
+(async () => {
+  const app = express();
+  app.use(cookieParser());
+  app.use(cors());
 
-    console.log("Inserting a new user into the database...");
-    const user = new User();
-    user.firstName = "Timber";
-    user.lastName = "Saw";
-    user.age = 25;
-    await connection.manager.save(user);
-    console.log("Saved a new user with id: " + user.id);
+  await createConnections();
 
-    console.log("Loading users from the database...");
-    const users = await connection.manager.find(User);
-    console.log("Loaded users: ", users);
+  app.get("/", (_req, res: Response, _next) =>
+    res.send("Hola Fuanca vamos a coronar con fuerza y dedicacion")
+  );
 
-    console.log("Here you can setup and run express/koa/any other framework.");
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [UserResolver]
+    })
+  });
 
-}).catch(error => console.log(error));
+  apolloServer.applyMiddleware({ app });
+
+  app.listen(4000, () => {
+    console.log(`App running on port http://localhost:4000`);
+    console.log(`GraphQL running on port http://localhost:4000/graphql`);
+  });
+})();
